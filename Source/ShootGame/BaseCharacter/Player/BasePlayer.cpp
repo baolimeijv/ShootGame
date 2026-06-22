@@ -1,6 +1,4 @@
-
-
-#include "BasePlayer.h"
+#include "BaseCharacter/Player/BasePlayer.h"
 
 #include"GameFramework/SpringArmComponent.h"
 #include"Camera/CameraComponent.h"
@@ -14,6 +12,10 @@
 #include"Kismet/GameplayStatics.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Animation/AnimMontage.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Components/HealthComponent.h"
+#include"BaseCharacter/BaseCharacter.h"
 
 ABasePlayer::ABasePlayer()
 {
@@ -24,6 +26,7 @@ ABasePlayer::ABasePlayer()
 	PlayerCameraBoom->TargetArmLength = 200.0f;
 	//注意这里是跟着准星旋转不是角色
 	PlayerCameraBoom->bUsePawnControlRotation = true;
+	PlayerCameraBoom->SocketOffset = FVector(0.f, 50.f, 70.f);
 
 	PlayerCamera = CreateDefaultSubobject<UCameraComponent>("PlayerCamera");
 	PlayerCamera->SetupAttachment(PlayerCameraBoom);
@@ -32,9 +35,9 @@ ABasePlayer::ABasePlayer()
 	//这里是让角色不跟准星旋转
 	bUseControllerRotationPitch = true;
 	bUseControllerRotationRoll = true;
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f, 0.f);
+	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
 }
 
@@ -76,7 +79,7 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(PlayerLook, ETriggerEvent::Triggered, this, &ABasePlayer::Look);
 		EnhancedInputComponent->BindAction(PlayerJump, ETriggerEvent::Started, this, &ABasePlayer::Jump);
 		EnhancedInputComponent->BindAction(PlayerJump, ETriggerEvent::Completed, this, &ABasePlayer::StopJumping);
-		EnhancedInputComponent->BindAction(PlayerShoot, ETriggerEvent::Triggered, this, &ABasePlayer::Shoot);
+		EnhancedInputComponent->BindAction(PlayerShoot, ETriggerEvent::Started, this, &ABasePlayer::Shoot);
 	}
 
 }
@@ -139,7 +142,76 @@ void ABasePlayer::Shoot(const FInputActionValue& Value)
 	if (PlayerAnimInstance)
 	{
 		PlayerAnimInstance->Montage_Play(AM_Shoot);
-		
+		/*
+		FHitResult ShootHit;
+		const FVector StartLocation = SocketLoaction;
+		const FRotator StartRotation = SocketRotation;
+		const FVector EndLocation = StartLocation + StartRotation.Vector() * 20000.f;
+		//射线终点
+		FVector ShootBeamEnd = EndLocation;
+		GetWorld()->LineTraceSingleByChannel(ShootHit, StartLocation, EndLocation, ECC_Visibility);
+		//DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 3.f);
+		//如果射线击中物体
+		if(ShootHit.bBlockingHit)
+		{
+			DrawDebugPoint(GetWorld(), ShootHit.Location, 10.f, FColor::Green, false, 3.f);
+			if (P_ShootHit)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ShootHit, ShootHit.Location);
+			}
+			ShootBeamEnd = ShootHit.Location;
+		}
+		//射线
+		if (P_ShootBeam)
+		{
+			UParticleSystemComponent* P_Beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ShootBeam, StartLocation, StartRotation, true);
+			P_Beam->SetVectorParameter("Target", ShootBeamEnd);
+		}
+		*/
 	}
+
+	//准星射击
+	APlayerController* pc= Cast<APlayerController>(Controller);
+	if (!pc)return;
+	
+	FVector CamLoc;
+	FRotator CamRot;
+	pc->GetPlayerViewPoint(CamLoc, CamRot);
+
+	FHitResult Hitres;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	FVector startLocation = CamLoc;
+	FVector endLocation = startLocation + CamRot.Vector() * 20000.f;
+
+	GetWorld()->LineTraceSingleByChannel(Hitres, startLocation, endLocation, ECC_Visibility, Params);
+
+	FVector endBeamLoc = endLocation;
+	if (P_ShootBeam)
+	{
+		if (Hitres.bBlockingHit)endBeamLoc = Hitres.Location;
+		UParticleSystemComponent* P_Beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ShootBeam, SocketLoaction, SocketRotation, true);
+		P_Beam->SetVectorParameter("Target", endBeamLoc);
+	}
+
+	if (Hitres.bBlockingHit)
+	{
+		DrawDebugPoint(GetWorld(), Hitres.Location,5.f ,FColor::Green, false, 3.f);
+		if (P_ShootHit)UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ShootHit, Hitres.Location);
+
+		//伤害
+		AActor* HitActor = Hitres.GetActor();
+		if (HitActor && HitActor != this)
+		{
+			UHealthComponent* TargetHealth = HitActor->FindComponentByClass<UHealthComponent>();
+			if (TargetHealth)
+			{
+				TargetHealth->TakeDamage(20.f, this);
+			}
+		}
+	}
+
+
 }
 

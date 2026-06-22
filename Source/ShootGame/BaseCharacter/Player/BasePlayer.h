@@ -3,15 +3,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "BaseCharacter/BaseCharacter.h"
 #include "BasePlayer.generated.h"
 
 struct FInputActionValue;
 class USoundCue;
 class UParticleSystem;
 class UAnimMontage;
+class ABaseCharacter;
 
 UCLASS()
-class SHOOTGAME_API ABasePlayer : public ACharacter
+class SHOOTGAME_API ABasePlayer : public ABaseCharacter
 {
 	GENERATED_BODY()
 private:
@@ -36,13 +38,26 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerInput", meta = (AllowPrivateAccess="true"))
 	class UInputAction* PlayerShoot;
 
-	//Éä»÷ÒôÐ§Á£×Ó²¥·Å
+	//Éä»÷ÒôÐ§
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shoot", meta = (AllowPrivateAccess = "true"))
 	class USoundCue* ShootSound;
+
+	//Éä»÷Á£×Ó
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shoot", meta = (AllowPrivateAccess = "true"))
 	class UParticleSystem* P_ShootMuzzle;
+	//»÷ÖÐ
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shoot", meta = (AllowPrivateAccess = "true"))
+	class UParticleSystem* P_ShootHit;
+	//Éä»÷Ïß
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shoot", meta = (AllowPrivateAccess = "true"))
+	class UParticleSystem* P_ShootBeam;
+
+	//Éä»÷¶¯»­
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shoot", meta = (AllowPrivateAccess = "true"))
     class UAnimMontage* AM_Shoot;
+
+
+
 
 protected:
 	void Move(const FInputActionValue& Value);
