@@ -16,6 +16,7 @@
 #include "Particles/ParticleSystem.h"
 #include "Components/HealthComponent.h"
 #include"BaseCharacter/BaseCharacter.h"
+#include"Components/CapsuleComponent.h"
 
 ABasePlayer::ABasePlayer()
 {
@@ -39,6 +40,8 @@ ABasePlayer::ABasePlayer()
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 
+	//ÉèÖÃÍ¨µÀ
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
 }
 
 void ABasePlayer::BeginPlay()
@@ -185,7 +188,7 @@ void ABasePlayer::Shoot(const FInputActionValue& Value)
 	FVector startLocation = CamLoc;
 	FVector endLocation = startLocation + CamRot.Vector() * 20000.f;
 
-	GetWorld()->LineTraceSingleByChannel(Hitres, startLocation, endLocation, ECC_Visibility, Params);
+	GetWorld()->LineTraceSingleByChannel(Hitres, startLocation, endLocation, ECC_GameTraceChannel1, Params);
 
 	FVector endBeamLoc = endLocation;
 	if (P_ShootBeam)

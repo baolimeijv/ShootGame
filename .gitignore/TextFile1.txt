@@ -1,7 +1,37 @@
+# UE编译缓存（绝对不上传）
 Binaries/
 Intermediate/
 DerivedDataCache/
 Saved/
+
+# VS工程缓存
 .vs/
+.vsconfig
+*.sln
+*.suo
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Mac苹果Xcode文件
 *.xcodeproj
 *.xcworkspace
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.xcscheme
+
+# 本地用户配置、日志
+*.log
+*.uproject.user
+*.pdb
+*.obj
+*.lib
+*.dll
+
+# 本地备份文件夹
+Backup/
+Backup1/
+
+# 第三方花草资源包（不提交）
+Content/OWD_Flowers_Pack/
