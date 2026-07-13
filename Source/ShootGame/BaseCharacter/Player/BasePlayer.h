@@ -11,6 +11,7 @@ class USoundCue;
 class UParticleSystem;
 class UAnimMontage;
 class ABaseCharacter;
+class UGameplayEffect;
 
 UCLASS()
 class SHOOTGAME_API ABasePlayer : public ABaseCharacter
@@ -56,8 +57,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shoot", meta = (AllowPrivateAccess = "true"))
     class UAnimMontage* AM_Shoot;
 
-
-
+	
 
 protected:
 	void Move(const FInputActionValue& Value);
@@ -67,6 +67,11 @@ public:
 	ABasePlayer();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	//GAS
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
+	 TSubclassOf<UGameplayEffect> DamageEffectClass;
+
 protected:
 	virtual void BeginPlay() override;
 

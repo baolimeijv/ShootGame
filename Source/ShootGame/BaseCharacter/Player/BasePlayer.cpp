@@ -17,6 +17,7 @@
 #include "Components/HealthComponent.h"
 #include"BaseCharacter/BaseCharacter.h"
 #include"Components/CapsuleComponent.h"
+#include"GAS/MyGASHelper.h"
 
 ABasePlayer::ABasePlayer()
 {
@@ -207,11 +208,12 @@ void ABasePlayer::Shoot(const FInputActionValue& Value)
 		AActor* HitActor = Hitres.GetActor();
 		if (HitActor && HitActor != this)
 		{
-			UHealthComponent* TargetHealth = HitActor->FindComponentByClass<UHealthComponent>();
+			/*UHealthComponent* TargetHealth = HitActor->FindComponentByClass<UHealthComponent>();
 			if (TargetHealth)
 			{
 				TargetHealth->TakeDamage(20.f, this);
-			}
+			}*/
+			UMyGASHelper::ApplyDamageToActor(this, HitActor, 20.f, DamageEffectClass);
 		}
 	}
 

@@ -3,31 +3,26 @@ Binaries/
 Intermediate/
 DerivedDataCache/
 Saved/
+Releases/
+LocalBuilds/
 
-# VS工程缓存
+# VS工程缓存（仅忽略用户临时文件，工程文件保留）
 .vs/
 .vsconfig
-*.sln
 *.suo
-*.vcxproj
-*.vcxproj.filters
 *.vcxproj.user
 
-# Mac苹果Xcode文件
-*.xcodeproj
-*.xcworkspace
-*.pbxuser
-*.mode1v3
-*.mode2v3
-*.xcscheme
-
-# 本地用户配置、日志
+# Windows编译产物、临时文件
 *.log
 *.uproject.user
 *.pdb
 *.obj
 *.lib
 *.dll
+*.exe
+*.tmp
+*.bak
+*.cache
 
 # 本地备份文件夹
 Backup/
@@ -35,3 +30,4 @@ Backup1/
 
 # 第三方花草资源包（不提交）
 Content/OWD_Flowers_Pack/
+

@@ -6,9 +6,9 @@
 #include "BaseCharacter/BaseCharacter.h"
 #include "Enemy.generated.h"
 
-/**
- * 
- */
+class UGameplayEffect;
+
+
 UCLASS()
 class SHOOTGAME_API AEnemy : public ABaseCharacter
 {
@@ -16,6 +16,9 @@ class SHOOTGAME_API AEnemy : public ABaseCharacter
 	
 public:
 	AEnemy();
+	//GAS
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GAS")
+	TSubclassOf<UGameplayEffect>DamageEffectClass;
 
 protected:
 	virtual void BeginPlay() override;

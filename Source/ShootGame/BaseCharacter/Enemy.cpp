@@ -4,6 +4,8 @@
 #include "DrawDebugHelpers.h"
 #include "Components/HealthComponent.h"
 #include"Components/CapsuleComponent.h"
+#include"GAS/MyGASHelper.h"
+
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -36,11 +38,13 @@ void AEnemy::ShootAtPlayer(AActor* Target)
 	if (HitResult.bBlockingHit && HitResult.GetActor())
 	{
 		AActor* HitActor = HitResult.GetActor();
-		UHealthComponent* HealthComp = HitActor->FindComponentByClass<UHealthComponent>();
+		/*UHealthComponent* HealthComp = HitActor->FindComponentByClass<UHealthComponent>();
 		if (HealthComp)
 		{
 			HealthComp->TakeDamage(10.f, this);
-		}
+		}*/
+
+		UMyGASHelper::ApplyDamageToActor(this, HitActor, 10.f, DamageEffectClass);
 
 		// 调试可视化
 		DrawDebugLine(GetWorld(), StartLocation, HitResult.Location, FColor::Red, false, 1.f);

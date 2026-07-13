@@ -4,6 +4,10 @@
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
 
+// GAS headers
+#include "GameplayEffectTypes.h"
+#include "GameFramework/Actor.h"
+
 #include "MyAttributeSet.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -11,6 +15,7 @@
 	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+
 
 UCLASS()
 class SHOOTGAME_API UMyAttributeSet : public UAttributeSet
@@ -30,4 +35,6 @@ public:
 
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
+	bool bDead = false;
 };
